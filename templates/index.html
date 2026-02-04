@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 关键：解决图片防盗链问题 -->
+    <meta name="referrer" content="no-referrer">
+    <title>皮皮的秘密基地</title>
+    <link rel="icon" href="https://web-static.kurobbs.com/resource/prod/icon.ico" type="image/x-icon">
+    <script src="https://static.geetest.com/v4/gt4.js"></script>
+    <script src="https://apps.bdimg.com/libs/jquery/1.6.4/jquery.min.js"></script>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background-color: #ffe6e6; /* 粉色背景 */
+            background-image: radial-gradient(#ffcccc 1px, transparent 1px); /* 可爱的小波点 */
+            background-size: 20px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #555;
+        }
+
+        .login-container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.2);
+            width: 340px;
+            text-align: center;
+            border: 3px solid #fff0f0;
+            transition: transform 0.3s ease;
+            position: relative;
+            z-index: 10;
+        }
+
+        .login-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .login-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .banner {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid #ffcccc;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+            margin-bottom: 15px;
+            background: white;
+            animation: bounce 3s infinite ease-in-out;
+        }
+
+        .banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .welcome-text {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #ff6b6b;
+            margin-bottom: 5px;
+        }
+
+        .sub-text {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .input-group {
+            margin-bottom: 1.2rem;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #ff8e8e;
+            font-weight: bold;
+            font-size: 0.9rem;
+            padding-left: 10px;
+        }
+
+        input[type="tel"],
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ffe0e0;
+            border-radius: 25px;
+            box-sizing: border-box;
+            font-size: 14px;
+            background-color: #fffbfc;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        input[type="tel"]:focus,
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        .verification-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .verification-group input {
+            flex-grow: 1;
+        }
+
+        button {
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        #getCodeBtn {
+            width: auto;
+            white-space: nowrap;
+            padding: 0 15px;
+            background-color: #ffd1d1;
+            color: #ff6b6b;
+        }
+        
+        #getCodeBtn:hover:not(:disabled) {
+            background-color: #ffb8b8;
+        }
+
+        #getCodeBtn:disabled {
+            background-color: #f0f0f0;
+            color: #ccc;
+            cursor: not-allowed;
+        }
+
+        #loginBtn {
+            width: 100%;
+            padding: 12px;
+            background-color: #ff6b6b;
+            color: white;
+            margin-top: 10px;
+            font-size: 18px;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        #loginBtn:hover:not(:disabled) {
+            background-color: #ff5252;
+            transform: scale(1.02);
+        }
+        
+        #loginBtn:disabled {
+            background-color: #e0e0e0;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .user-id-display {
+            text-align: center;
+            color: #ffb8b8;
+            font-size: 0.8em;
+            margin-top: 20px;
+            font-weight: bold;
+            opacity: 0.7;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 230, 230, 0.8);
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 30px;
+            border: 3px solid #ffcccc;
+            width: 300px;
+            border-radius: 20px;
+            text-align: center;
+            transform: scale(0.7);
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.2);
+        }
+
+        .modal.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal h2 {
+            color: #ff6b6b;
+            margin-top: 0;
+        }
+
+        .close {
+            color: #ffaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 20px;
+        }
+        
+        .close:hover {
+            color: #ff6b6b;
+        }
+
+        .redirect-button {
+            margin-top: 15px;
+            padding: 10px 30px;
+            background-color: #ff6b6b;
+            color: white;
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div class="banner">
+                <img src="https://img.kookapp.cn/assets/2025-12/14/1HQBjQepoq0sg0sg.png?x-oss-process=style/ld" alt="Cute Pipi">
+            </div>
+            <div class="welcome-text">欢迎回家！✨</div>
+            <div class="sub-text">皮皮一直在等你呢~</div>
+        </div>
+        
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="phone">暗号 (某不知名的11位数神秘代码)</label>
+                <input type="tel" id="phone" name="phone" required pattern="[0-9]{11}" placeholder="请输入11位呼叫暗号...">
+            </div>
+            <div class="input-group">
+                <label for="verificationCode">魔法口令 (验证码)</label>
+                <div class="verification-group">
+                    <input type="text" id="verificationCode" name="verificationCode" required placeholder="口令是什么？">
+                    <button type="button" id="getCodeBtn" disabled>获取魔法</button>
+                </div>
+            </div>
+            
+            <button type="submit" id="loginBtn">召唤皮皮！(登录)</button>
+            
+            <div id="userIdDisplay" class="user-id-display">识别码: {{ userId }}</div>
+        </form>
+    </div>
+
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <img src="https://img.kookapp.cn/assets/2025-12/14/zvqHvm5QUa0lz0mn.png" style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid #ffcccc; margin-bottom: 10px;">
+            <h2>召唤成功！🎉</h2>
+            <p>好耶！终于等到你啦~</p>
+            <p class="countdown" style="color:#aaa; font-size: 14px;">5秒后进入秘密基地...</p>
+            <button class="redirect-button">立刻进入</button>
+        </div>
+    </div>
+
+    <script>
+        const phoneInput = document.getElementById('phone');
+        const verificationCodeInput = document.getElementById('verificationCode');
+        const getCodeBtn = document.getElementById('getCodeBtn');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginForm = document.getElementById('loginForm');
+        const modal = document.getElementById('successModal');
+        const closeBtn = modal.querySelector('.close');
+
+        // 检查 ID 逻辑
+        window.addEventListener('load', function() {
+            var userId = "{{ userId }}";
+            if (!userId || userId === "" || userId === "None") {
+                alert("哎呀，链接好像失效了...我们去休息区看看吧！😿");
+                window.location.href = "/404";
+            }
+        });
+
+        phoneInput.addEventListener('input', function () {
+            const isPhoneValid = phoneInput.value.length === 11;
+            const isCodeValid = verificationCodeInput.value.trim() !== "";
+            getCodeBtn.disabled = !isPhoneValid;
+            loginBtn.disabled = !isPhoneValid || !isCodeValid;
+        });
+
+        verificationCodeInput.addEventListener('input', function () {
+            loginBtn.disabled = this.value === "" || phoneInput.value.length !== 11;
+        });
+
+        const captchaId = "ec4aa4174277d822d73f2442a165a2cd";
+        const product = "bind";
+
+        initGeetest4({
+            captchaId: captchaId,
+            product: product,
+        }, function (captcha) {
+            captcha.onReady(function () {
+            }).onSuccess(function () {
+                var result = captcha.getValidate();
+                if (!result) {
+                    return alert('皮皮说要先完成拼图哦！🧩');
+                }
+                result.captcha_id = captchaId
+                $.ajax({
+                    url: 'https://api.kurobbs.com/user/getSmsCodeForH5',
+                    type: 'POST',
+                    data: { "mobile": phoneInput.value, "geeTestData": JSON.stringify(result) },
+                    headers: { "devcode": generateRandomString(), "source": "h5" },
+                    success: res => alert(res.success ? '魔法口令已发射！请查收 ✨' : '发射失败了 : ' + res.msg),
+                    error: () => alert('网络好像断开连接了...皮皮找不到服务器 😭')
+                });
+            }).onError(function () {
+                alert('出错啦，请检查网络连接');
+            })
+
+            getCodeBtn.onclick = function () {
+                this.disabled = true;
+                let countdown = 60;
+                const originalText = this.textContent;
+
+                captcha.showBox();
+
+                const timer = setInterval(() => {
+                    this.textContent = `${countdown}秒后重试`;
+                    countdown--;
+                    if (countdown < 0) {
+                        clearInterval(timer);
+                        this.textContent = originalText;
+                        this.disabled = false;
+                        captcha.hideBox();
+                    }
+                }, 1000);
+            }
+        });
+
+        loginForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const data = {
+                mobile: phoneInput.value,
+                code: verificationCodeInput.value,
+                auth: "{{ auth }}"
+            }
+            
+            // --- 动态路径生成 (核心部分) ---
+            // 生成 /xw + 随机字符串，例如 /xwKjL2mP
+            var dynamicPath = '/xw' + generateRandomString();
+
+            $.ajax({
+                url: dynamicPath, // 使用动态路径
+                type: 'POST',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: res => res.success ? showSuccessModal() : alert('召唤失败: ' + (res.msg ? res.msg : '口令好像不对哦？🤔')),
+                error: () => alert('系统开小差了，请稍后再试')
+            });
+        });
+
+        function showSuccessModal() {
+            const modal = document.getElementById('successModal');
+            const countdownElement = modal.querySelector('.countdown');
+            const redirectButton = modal.querySelector('.redirect-button');
+            let countdown = 5;
+
+            modal.classList.add('show');
+            setTimeout(() => {
+                modal.querySelector('.modal-content').style.transform = 'scale(1)';
+                modal.querySelector('.modal-content').style.opacity = '1';
+            }, 10);
+
+            function updateCountdown() {
+                countdownElement.textContent = `${countdown}秒后前往秘密休息区(404)...`;
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    window.location.href = '/404.html';
+                }
+                countdown--;
+            }
+
+            const timer = setInterval(updateCountdown, 1000);
+
+            redirectButton.addEventListener('click', () => {
+                clearInterval(timer);
+                window.location.href = '/404.html';
+            });
+
+            modal.querySelector('.close').addEventListener('click', () => {
+                clearInterval(timer);
+                window.location.href = '/404.html';
+            });
+        }
+
+        closeBtn.addEventListener('click', closeModal);
+
+        function closeModal() {
+            modal.querySelector('.modal-content').style.transform = 'scale(0.7)';
+            setTimeout(() => modal.classList.remove('show'), 300);
+        }
+
+        function generateRandomString() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            return Array(32)
+                .fill(0)
+                .map(() => chars.charAt(Math.floor(Math.random() * chars.length)))
+                .join('');
+        }
+    </script>
+</body>
+
+</html>

@@ -1,3 +1,18 @@
+Metadata-Version: 2.4
+Name: ww-login
+Version: 0.1.1
+Summary: Login service
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: black>=24.10.0
+Requires-Dist: fastapi>=0.115.6
+Requires-Dist: httpx>=0.28.1
+Requires-Dist: jinja2>=3.1.5
+Requires-Dist: pydantic>=2.10.5
+Requires-Dist: pydantic-settings>=2.7.1
+Requires-Dist: starlette>=0.41.3
+Requires-Dist: uvicorn>=0.34.0
+
 # WutheringWaves Login Service
 
 一个用于 WutheringWavesUID 的外置登录服务。

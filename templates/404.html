@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 👇👇👇 就是加了下面这一行，专门用来解决图片不显示的问题 👇👇👇 -->
+    <meta name="referrer" content="no-referrer"> 
+    <title>皮皮大拷问</title>
+    <style>
+        /* 全局样式：粉粉嫩嫩的 */
+        body {
+            background-color: #ffe6e6; 
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            color: #ff6b6b;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .pipi-img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 5px solid #ffcccc;
+            margin-bottom: 30px;
+            animation: bounce 2s infinite ease-in-out; 
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            font-weight: bold;
+        }
+
+        .yes-btn {
+            background-color: #ff6b6b;
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .yes-btn:hover {
+            transform: scale(1.05);
+            background-color: #ff5252;
+        }
+
+        .no-btn {
+            background-color: #f1f1f1;
+            color: #888;
+        }
+
+        .no-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .success-message {
+            display: none;
+        }
+
+        .success-message h2 {
+            color: #ff6b6b;
+        }
+
+        .heart {
+            position: absolute;
+            color: #ff6b6b;
+            animation: fall linear forwards;
+            font-size: 20px;
+            z-index: 1;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div id="main-content">
+            <h1>你也觉得皮皮很可爱吗？<br>🥺👉👈</h1>
+            <img src="https://img.kookapp.cn/assets/2025-12/14/0qsTwKyCVk0zk0ju.png" alt="可爱的皮皮" class="pipi-img" id="pipi-image">
+
+            <div class="btn-group">
+                <button class="yes-btn" onclick="sayYes()">超级可爱！💖</button>
+                <button class="no-btn" onclick="sayNo()" id="no-btn">并没有...🙄</button>
+            </div>
+        </div>
+
+        <div class="success-message" id="success-content">
+            <img src="https://img.kookapp.cn/assets/2025-12/14/zvqHvm5QUa0lz0mn.png" alt="开心的皮皮" class="pipi-img">
+            <h2>耶！英雄所见略同！🎉</h2>
+            <p>皮皮也最喜欢你啦~  mua! 😽</p>
+        </div>
+    </div>
+
+    <script>
+        let yesSize = 18;
+        let clickCount = 0;
+
+        const noTexts = [
+            "并没有...🙄",
+            "你确定？😯",
+            "再仔细看看？🔍",
+            "皮皮会伤心的💔",
+            "别这样嘛🥺",
+            "真的不可爱吗？😭",
+            "气死我了😡",
+            "不许点这个！🚫"
+        ];
+
+        function sayNo() {
+            clickCount++;
+            yesSize += 15; 
+            const yesBtn = document.querySelector('.yes-btn');
+            yesBtn.style.fontSize = yesSize + 'px';
+            yesBtn.style.padding = (15 + clickCount * 5) + 'px ' + (30 + clickCount * 10) + 'px';
+
+            const noBtn = document.getElementById('no-btn');
+            noBtn.innerText = noTexts[clickCount % noTexts.length];
+        }
+
+        function sayYes() {
+            document.getElementById('main-content').style.display = 'none';
+            document.getElementById('success-content').style.display = 'block';
+            createHearts();
+        }
+
+        function createHearts() {
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                heart.innerText = ['wk', '💖', '🌸', '😻', '✨'][Math.floor(Math.random() * 5)];
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = -20 + 'px';
+                heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
+                heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
+                document.body.appendChild(heart);
+                setTimeout(() => {
+                    heart.remove();
+                }, 5000);
+            }, 100);
+        }
+    </script>
+</body>
+</html>
